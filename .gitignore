@@ -1,0 +1,11 @@
+*
+!.gitignore
+!README.md
+!Dockerfile
+!compose.yaml
+!src/
+!*.patch
+!*.sh
+!*.py
+!output/
+!.keep

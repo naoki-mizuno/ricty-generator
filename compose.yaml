@@ -1,0 +1,7 @@
+services:
+  ricty-generator:
+    image: naomiz/ricty-generator
+    build: .
+    volumes:
+      - ./output:/output
+    command: ["7DZz|"]
