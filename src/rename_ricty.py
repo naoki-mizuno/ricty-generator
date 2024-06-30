@@ -13,15 +13,15 @@ def rename(font_fpath: Path, out_dpath: Path, add_nerd_to_name=False):
     if out_dpath.mkdir(parents=True, exist_ok=True):
         raise ValueError(f"{out_dpath!s} is not a directory")
     try:
-        sounce_font = fontforge.open(str(font_fpath))
+        source_font = fontforge.open(str(font_fpath))
     except Exception as e:
         raise e
 
     family = []
     weight = []
     pattern = []
-    for name in sounce_font.fullname.strip().split():
-        if name in ["Ricty", "Diminished", "Discord"]:
+    for name in source_font.fullname.strip().split():
+        if name in ["Ricty", "Diminished", "Discord", "RictyDiminished", "RictyDiscord"]:
             family.append(name)
         elif name in ["Regular", "Bold", "Oblique", "Italic"]:
             if name == "Oblique":
@@ -30,30 +30,31 @@ def rename(font_fpath: Path, out_dpath: Path, add_nerd_to_name=False):
         elif name in ["Nerd"]:
             pattern.append(name)
     if len(family) == 0:
-        raise ValueError("invalid fullname")
+        raise ValueError(f"Fullname looks strange: {source_font.fullname}")
 
+    weight_suffix = ("-" + "".join(weight)) if len(weight) > 0 else ""
     if add_nerd_to_name:
-        fontname = "".join(family) + "".join(pattern) + "-" + "".join(weight)
+        fontname = "".join(family) + "".join(pattern) + weight_suffix
         familyname = " ".join([" ".join(family), " ".join(pattern)])
     else:
-        fontname = "".join(family) + "-" + "".join(weight)
+        fontname = "".join(family) + weight_suffix
         familyname = " ".join(family)
     stylename = " ".join(weight)
     fullname = " ".join([familyname, stylename])
 
-    sounce_font.fontname = fontname
-    sounce_font.fullname = fullname
-    sounce_font.familyname = familyname
-    sounce_font.appendSFNTName("English (US)", "PostScriptName", fontname)
-    sounce_font.appendSFNTName("English (US)", "Fullname", fullname)
-    sounce_font.appendSFNTName("English (US)", "Family", familyname)
-    sounce_font.appendSFNTName("English (US)", "SubFamily", stylename)
-    sounce_font.appendSFNTName("English (US)", "Preferred Family", familyname)
-    sounce_font.appendSFNTName("English (US)", "Compatible Full", fullname)
+    source_font.fontname = fontname
+    source_font.fullname = fullname
+    source_font.familyname = familyname
+    source_font.appendSFNTName("English (US)", "PostScriptName", fontname)
+    source_font.appendSFNTName("English (US)", "Fullname", fullname)
+    source_font.appendSFNTName("English (US)", "Family", familyname)
+    source_font.appendSFNTName("English (US)", "SubFamily", stylename)
+    source_font.appendSFNTName("English (US)", "Preferred Family", familyname)
+    source_font.appendSFNTName("English (US)", "Compatible Full", fullname)
 
     path = out_dpath / f"{fontname}.ttf"
-    sounce_font.generate(str(path), flags=("opentype", "PfEd-comments"))
-    sounce_font.close()
+    source_font.generate(str(path), flags=("opentype", "PfEd-comments"))
+    source_font.close()
 
     return
 

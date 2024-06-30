@@ -51,7 +51,7 @@ _download \
     ${TMP_DPATH}/Inconsolata-Bold.ttf
 # Migu 1M (download and extract)
 _download \
-    https://osdn.net/projects/mix-mplus-ipa/downloads/72511/migu-1m-${MIGU_VERSION}.zip \
+    https://github.com/itouhiro/mixfont-mplus-ipa/releases/download/v2020.0307/migu-1m-${MIGU_VERSION}.zip \
     ${TMP_DPATH}/migu-1m.zip \
     && unzip -d ${TMP_DPATH}/migu-1m ${TMP_DPATH}/migu-1m.zip 1>/dev/null \
     && mv -f ${TMP_DPATH}/migu-1m/*/migu-1m-*.ttf ${TMP_DPATH} \
@@ -105,20 +105,16 @@ done
 if $PATCH_NERD_FONTS; then
     if [[ ! -d ${TMP_DPATH}/nerd-fonts ]]; then
         git clone --depth=1 https://github.com/ryanoasis/nerd-fonts ${TMP_DPATH}/nerd-fonts
+        _download \
+            https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip \
+            ${TMP_DPATH}/FontPatcher.zip \
+            && unzip -d ${TMP_DPATH}/nerd-fonts ${TMP_DPATH}/FontPatcher.zip
     fi
     for fpath in ${OUTPUT_DPATH}/Ricty*.ttf; do
         ${PYTHON} \
             ${TMP_DPATH}/nerd-fonts/font-patcher \
             --quiet \
-            --fontawesome \
-            --fontawesomeextension \
-            --fontlinux \
-            --octicons \
-            --powersymbols \
-            --powerline \
-            --powerlineextra \
-            --material \
-            --weather \
+            --complete \
             --adjust-line-height \
             --outputdir="${TMP_DPATH}" \
             "${fpath}" \
@@ -128,3 +124,5 @@ if $PATCH_NERD_FONTS; then
         ${PYTHON} "${PREFIX}/rename_ricty.py" "${fpath}" "${OUTPUT_DPATH}"
     done
 fi
+
+echo "Everything completed!"
