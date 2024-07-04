@@ -21,11 +21,18 @@ def rename(font_fpath: Path, out_dpath: Path, add_nerd_to_name=False):
     weight = []
     pattern = []
     for name in source_font.fullname.strip().split():
-        if name in ["Ricty", "Diminished", "Discord", "RictyDiminished", "RictyDiscord"]:
+        if name in ["Ricty", "Diminished", "Discord"]:
             family.append(name)
+        elif name in ["RictyDiminished", "RictyDiscord"]:
+            # Nerd Font-patched names become CamelCased
+            family.append("Ricty")
+            family.append(name.replace("Ricty", ""))
         elif name in ["Regular", "Bold", "Oblique", "Italic"]:
             if name == "Oblique":
                 name = "Italic"
+            weight.append(name)
+        elif name in ["Book"]:
+            name = "Regular"
             weight.append(name)
         elif name in ["Nerd"]:
             pattern.append(name)
@@ -44,6 +51,7 @@ def rename(font_fpath: Path, out_dpath: Path, add_nerd_to_name=False):
 
     source_font.fontname = fontname
     source_font.fullname = fullname
+    source_font.weight = stylename
     source_font.familyname = familyname
     source_font.appendSFNTName("English (US)", "PostScriptName", fontname)
     source_font.appendSFNTName("English (US)", "Fullname", fullname)
